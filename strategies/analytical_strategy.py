@@ -118,25 +118,20 @@ class AnalyticalStrategy(Strategy):
     def pick_most_probable_hunt_point(self):
 
         probability_grid = [[0 for x in range(10)] for y in range(10)]
-        valid_ship_points_pairs = []
 
         def test(direction, length, x, y):
             try:
-                if [GridPoint(x, y), GridPoint(x, y).move(direction, times=length)] in valid_ship_points_pairs or [
-                        GridPoint(x, y).move(direction, times=length), GridPoint(x, y)] in valid_ship_points_pairs:
-                    return
+                GridPoint(x, y).move(direction, times=length-1)
             except ValueError:
                 return
             for delta in range(length):
-                try:
-                    point_to_check = GridPoint(x, y).move(direction, times=delta)
-                    if self.grid.is_checked(point_to_check) or point_to_check in self.dont_check:
-                        return  # that position is not available
-                except ValueError:
-                    pass
+                point_to_check = GridPoint(x, y).move(direction, times=delta)
+                if self.grid.is_checked(point_to_check) or point_to_check in self.dont_check:
+                    return False  # that position is not available
             for delta in range(length):  # if that position is available:
                 point_to_add = GridPoint(x, y).move(direction, times=delta)
-                probability_grid[point_to_add.y][point_to_add.x] += 1
+                probability_grid[point_to_add.y][point_to_add.x] += length - delta
+                return True
 
         def reduce_probability_grid():
             max = [0, 0]
@@ -146,12 +141,13 @@ class AnalyticalStrategy(Strategy):
                         max = [y, x]
             return GridPoint(max[1], max[0])
 
-        for length in self.alive_ships:
-            if self.alive_ships[length] != 0:
-                for x in range(10):
-                    for y in range(10):
-                        for direction in GridPoint.directions:
-                            test(direction, length, x, y)
+        for x in range(10):
+            for y in range(10):
+                for direction in GridPoint.directions:
+                    for length in reversed(sorted(self.alive_ships)):
+                        if self.alive_ships[length] != 0:
+                            if test(direction, length, x, y):
+                                break
 
         return reduce_probability_grid()
 
@@ -165,7 +161,8 @@ class AnalyticalStrategy(Strategy):
                         if not self.grid.is_checked(point) and point not in self.dont_check:
                             self.dont_check.append(point)
                             self.grid.mark(point, "*")
-                            # print(self.grid)
+                            print(self.grid)
+                            input()
                     except:
                         pass
 

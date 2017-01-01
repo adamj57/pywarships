@@ -226,7 +226,10 @@ class ShipConfig:
                                       self.ShipDetails(2, 3), self.ShipDetails(1, 4)]}
 
         if not (config is None):
-            self.config = self.predefined[config]
+            try:
+                self.config = self.predefined[config]
+            except KeyError:
+                raise ValueError("Config of name {} does not exist!".format(config))
         else:
             self.config = []
 
