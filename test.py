@@ -7,5 +7,5 @@ from strategies.analytical_strategy import AnalyticalStrategy
 if __name__ == "__main__":
     num_of_games = 10**4
 
-    st = StrategyTester(8)
-    st.test_to_console(RandomStrategy(), num_of_games) # Hey, it's working!
+    st = StrategyTester(4)
+    st.test_to_console(AnalyticalStrategy(), num_of_games) # Hey, it's working!

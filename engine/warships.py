@@ -138,10 +138,11 @@ class Ship:
 
 class Grid:
     def __init__(self):
-        self.grid = self.generate_blank_grid()
+        self.__grid = self.generate_blank_grid()
         self.checked_cells = 0
-        self.checked_ship_cells = 0
-        self.ships = []
+        self.__checked_ship_cells = 0
+        self.__ships = []
+        self.ship_config = ShipConfig()
 
     def generate_blank_grid(self):
         return [[Cell(GridPoint(x, y)) for x in range(10)] for y in range(10)]
@@ -155,7 +156,8 @@ class Grid:
         for point in valid_coords:
             self.__cell_at(point).ship_cell(True)
         ship = Ship([self.__cell_at(point) for point in valid_coords])
-        self.ships.append(ship)
+        self.__ships.append(ship)
+        self.ship_config.add_ship_of_length(length)
 
     def __check_ship_nearby(self, point):
         def check_offset(point, x_offset, y_offset):
@@ -172,12 +174,12 @@ class Grid:
                 check_offset(point, x, y)
 
     def __cell_at(self, point):
-        return self.grid[point.y][point.x]
+        return self.__grid[point.y][point.x]
 
     def check(self, point: GridPoint) -> CheckResult:
         if self.__cell_at(point).ship_cell():
-            self.checked_ship_cells += 1
-            for i in self.ships:
+            self.__checked_ship_cells += 1
+            for i in self.__ships:
                 if i.has_point(point):
                     i.hit(point)
                     if i.is_sunk():
@@ -194,7 +196,7 @@ class Grid:
         return self.__cell_at(point).checked()
 
     def is_won(self):
-        for ship in self.ships:
+        for ship in self.__ships:
             if not ship.is_sunk():
                 return False
         return True
@@ -204,7 +206,7 @@ class Grid:
 
     def __str__(self):
         string = "  0 1 2 3 4 5 6 7 8 9\n"
-        for i, row in enumerate(self.grid):
+        for i, row in enumerate(self.__grid):
             string += str(i)
             string += " "
             for item in row:
@@ -236,6 +238,13 @@ class ShipConfig:
     def add_ship_details(self, length, quantity):
         self.config.append(self.ShipDetails(length, quantity))
 
+    def add_ship_of_length(self, length):
+        for i in self.config:
+            if i.length == length:
+                i.quantity += 1
+                return
+        self.config.append(self.ShipDetails(length, 1))
+
     def __iter__(self):
         self.index = 0
         self.config.sort(key=lambda ship_detail: ship_detail.length, reverse=True)
@@ -253,7 +262,7 @@ class ShipConfig:
 def gen_rand_grid(config: ShipConfig):
     grid = Grid()
 
-    def place_random_ship(size):  # TODO: wbudować mechanizm sprawdzania, czy można jeszcze gdziekolwiek postawić statek
+    def place_random_ship(size):  # TODO: embed mechanizm that checks if ship can be placed or not
         ship_placed = False
         tries_count = 0
         while not ship_placed and tries_count < 50:
