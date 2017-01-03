@@ -25,8 +25,8 @@ class HumanStrategy(Strategy):
     def destroy(self, grid):
         ship_points = [self.first_ship_point]
 
-        possible_points = self.list_of_eligible_points(ship_points)  # wybierz dostępne pola
-        next_point = self.find_next_ship_point(possible_points, ship_points)  # znajdź następne pole
+        possible_points = self.list_of_eligible_points(ship_points)
+        next_point = self.find_next_ship_point(possible_points, ship_points)
 
         if next_point is None:  # = we found ship of length 2
             self.update_dont_check_points(ship_points)
@@ -48,36 +48,31 @@ class HumanStrategy(Strategy):
         return points_list
 
     def find_next_ship_point(self, possible_points, ship_points):
-        while True:  # powtarzaj, dopóki trafisz na pole ze statkiem
-
-            if len(possible_points) == 0:
-                return None
-              # shouldn't happen
-            random_point = random.choice(possible_points)  # weź dowolne pole z dostępnych
+        while True:  # repeat until you hit ship cell
+            random_point = random.choice(possible_points)
             possible_points.remove(random_point)
-            result = self.do_check(random_point)  # sprawdź to pole
+            result = self.do_check(random_point)
             if "MISS" in result:
                 pass
             elif "HIT" in result:
                 return random_point
             elif "SUNK" in result:
                 ship_points.append(random_point)
-                return None  # zatopiony, nie trzeba szukać dalej
+                return None  # None means that we found all ship cells
 
     def find_direction_of_ship(self, ship_points):
         first_point = ship_points[0]
         second_point = ship_points[1]
 
-        if first_point.x == second_point.x - 1 or first_point.x - 1 == second_point.x:  # sprawdzamy na jakiej
-            # linii znajduje się statek:
-            return ["left", "right"]  # poziomej, czy...
+        if first_point.x == second_point.x - 1 or first_point.x - 1 == second_point.x:  # on what line ship is:
+            return ["left", "right"]  # horizontal, or...
         else:
-            return ["down", "up"]  # pionowej
+            return ["down", "up"]  # vertical
 
     def find_rest_of_ship(self, directions, ship_points):
         for i in range(2):
             is_ship_cell = True
-            direction = random.choice(directions)  # wybierz kierunek startowy
+            direction = random.choice(directions)
             directions.remove(direction)
 
             if ship_points[0].is_on(direction, ship_points[1]):
@@ -85,12 +80,13 @@ class HumanStrategy(Strategy):
             else:
                 point = ship_points[1]
 
-            while is_ship_cell:  # powtarzaj, dopóki skończą się pole statku na linii
+            while is_ship_cell:  # repeat until we hit non-ship cell
                 try:
                     point = point.move(direction)
                     result = self.do_check(point)
                     if "MISS" in result:
-                        is_ship_cell = False  # skończyła się linia, ale nadal nie zatopiliśmy statku; idziemy w drugą stronę
+                        # that means we are returning to the starting point and trying again in other direction
+                        is_ship_cell = False
                     elif "HIT" in result:
                         is_ship_cell = True
                         ship_points.append(point)

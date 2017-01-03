@@ -26,7 +26,7 @@ class AnalyticalStrategy(Strategy):
         ship_points = [self.first_ship_point]
 
         possible_points = self.list_of_eligible_points(ship_points)
-        next_point = self.find_next_ship_point(possible_points, ship_points) # TODO: this must depend on probability!
+        next_point = self.find_next_ship_point(possible_points, ship_points)  # TODO: this must depend on probability!
 
         if next_point is None:  # = we found ship of length 2
             self.update_dont_check_points(ship_points)
@@ -81,12 +81,13 @@ class AnalyticalStrategy(Strategy):
             else:
                 point = ship_points[1]
 
-            while is_ship_cell:  # repeat until we are hitting ship cells
+            while is_ship_cell:  # repeat until we hit non-ship cell
                 try:
                     point = point.move(direction)
                     result = self.do_check(point)
                     if "MISS" in result:
-                        is_ship_cell = False  # that means we are returning to the starting point and trying again
+                        # that means we are returning to the starting point and trying again in other direction
+                        is_ship_cell = False
                     elif "HIT" in result:
                         is_ship_cell = True
                         ship_points.append(point)
@@ -116,7 +117,7 @@ class AnalyticalStrategy(Strategy):
 
         def test(direction, length, x, y):
             try:
-                GridPoint(x, y).move(direction, times=length-1)
+                GridPoint(x, y).move(direction, times=length - 1)
             except ValueError:
                 return
             for delta in range(length):
@@ -156,7 +157,7 @@ class AnalyticalStrategy(Strategy):
                         if not self.grid.is_checked(point) and point not in self.dont_check:
                             self.dont_check.append(point)
                             self.grid.mark(point, "*")
-                            #print(self.grid)
+                            # print(self.grid)
                     except:
                         pass
 
