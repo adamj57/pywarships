@@ -14,17 +14,21 @@ How to make my own strategies?
 
 If you want, you can create your own strategy - it must be child of `strategies.strategy.Strategy` class and implement `run` method:
 
-    def run(self, grid: Grid):
-        # your code goes here
+```python
+def run(self, grid: Grid):
+    # your code goes here
+```
 
 How to test my strategies?
 --------------------------
 
 Simply, use `engine.strategy_tester.StrategyTester` class. It has constructor with one optional argument - the number of workers assigned to complete the computation. Workers are different processes, running in paralel - If you are on `x` core proccesor, to be most efficient you can set number of workers to `x`. `StrategyTester` has 3 main testing methods - `test`, `test_to_console` and `test_to_file`:
 
-    test(strategy: Strategy, num_of_games)
-    test_to_console(strategy: Strategy, num_of_games)
-    test_to_file(strategy: Strategy, num_of_games, filename: str)
+```python
+test(strategy: Strategy, num_of_games)
+test_to_console(strategy: Strategy, num_of_games)
+test_to_file(strategy: Strategy, num_of_games, filename: str)
+```
 
 `test` just runs simulation `num_of_games` times and returns `(wins, cumulative_probabilities)` tuple, where `wins[x]` is number representing wins count at `x` moves (`x` from 0 to 100), and `cumulative_probabilities` is an list of ready-to-plot values representing cumulative probability curve.
 
@@ -34,11 +38,13 @@ Simply, use `engine.strategy_tester.StrategyTester` class. It has constructor wi
 
 **Example of test:**
 
-    from engine.strategy_tester import StrategyTester
-    from strategies.random_strategy import RandomStrategy
+```python
+from engine.strategy_tester import StrategyTester
+from strategies.random_strategy import RandomStrategy
 
-    if __name__ == "__main__":
-        num_of_games = 10**5
+if __name__ == "__main__":
+    num_of_games = 10**5
 
-        st = StrategyTester(4)
-        st.test_to_console(RandomStrategy(), num_of_games)
+    st = StrategyTester(4)
+    st.test_to_console(RandomStrategy(), num_of_games)
+```
