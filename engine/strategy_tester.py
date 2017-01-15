@@ -65,6 +65,16 @@ class StrategyTester:
         file.writelines((str(wins), "\n", str(probabilities)))
         file.close()
 
+    def test(self, strategy: Strategy, num_of_games):
+        wins = [0 for i in range(101)]
+        with Pool(self.workers) as p:
+            j = 0
+            for i in p.imap_unordered(worker1, Iterator(num_of_games, type(strategy))):
+                j += 1
+                wins[i] += 1
+        probabilities = self.__wins_to_cumulative_probability(wins, num_of_games)
+        return wins, probabilities
+
     def __wins_to_cumulative_probability(self, wins, num_of_games):
         probability = []
         current_probability = 0
