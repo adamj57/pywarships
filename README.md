@@ -22,7 +22,7 @@ def run(self, grid: Grid):
 How to test my strategies?
 --------------------------
 
-Simply, use `engine.strategy_tester.StrategyTester` class. It has constructor with one optional argument - the number of workers assigned to complete the computation. Workers are different processes, running in paralel - If you are on `x` core proccesor, to be most efficient you can set number of workers to `x`. `StrategyTester` has 3 main testing methods - `test`, `test_to_console` and `test_to_file`:
+Simply, use `engine.strategy_tester.StrategyTester` class. It has constructor with one optional argument - the number of workers assigned to complete the computation. Workers are different processes, running in parallel - If you are on `x` core proccesor, to be most efficient you can set number of workers to `x`. `StrategyTester` has 3 main testing methods - `test`, `test_to_console` and `test_to_file`:
 
 ```python
 test(strategy: Strategy, num_of_games)
