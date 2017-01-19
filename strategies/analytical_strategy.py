@@ -123,11 +123,10 @@ class AnalyticalStrategy(Strategy):
             for delta in range(length):
                 point_to_check = GridPoint(x, y).move(direction, times=delta)
                 if self.grid.is_checked(point_to_check) or point_to_check in self.dont_check:
-                    return False  # that position is not available
+                    return
             for delta in range(length):  # if that position is available:
                 point_to_add = GridPoint(x, y).move(direction, times=delta)
-                probability_grid[point_to_add.y][point_to_add.x] += length - delta
-                return True
+                probability_grid[point_to_add.y][point_to_add.x] += 1
 
         def reduce_probability_grid():
             max = [0, 0]
@@ -137,13 +136,15 @@ class AnalyticalStrategy(Strategy):
                         max = [y, x]
             return GridPoint(max[1], max[0])
 
-        for x in range(10):
-            for y in range(10):
-                for direction in GridPoint.directions:
-                    for length in reversed(sorted(self.alive_ships)):
-                        if self.alive_ships[length] != 0:
-                            if test(direction, length, x, y):
-                                break
+        for length in self.alive_ships:
+            if self.alive_ships[length] != 0:
+                for direction in ["right", "down"]:
+                    for x in range(10):
+                        for y in range(10):
+                            point_to_check = GridPoint(x, y)
+                            if self.grid.is_checked(point_to_check) or point_to_check in self.dont_check:
+                                continue
+                            test(direction, length, x, y)
 
         return reduce_probability_grid()
 
