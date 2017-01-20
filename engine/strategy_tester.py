@@ -2,13 +2,14 @@ from engine import warships as WS
 from engine.warships import ShipConfig
 from strategies.strategy import Strategy
 from multiprocessing import Pool
-
+from copy import deepcopy
 
 
 class Iterator:
-    def __init__(self, count, what_to_iter):
+    def __init__(self, count, strategy, config):
         self.counter = count
-        self.what_to_iter = what_to_iter
+        self.strategy = strategy
+        self.config = config
 
     def __iter__(self):
         return self
@@ -16,13 +17,14 @@ class Iterator:
     def __next__(self):
         self.counter -= 1
         if self.counter >= 0:
-            return self.what_to_iter()
+            return self.strategy(), deepcopy(self.config)
         else:
             raise StopIteration
 
 
-def worker1(strategy):
-    grid = WS.gen_rand_grid(ShipConfig("polish"))
+def worker1(params):
+    strategy, config = params
+    grid = WS.gen_rand_grid(config)
 
     while not grid.is_won():
         strategy.run(grid)
@@ -31,14 +33,15 @@ def worker1(strategy):
 
 
 class StrategyTester:
-    def __init__(self, workers=1):
+    def __init__(self, workers=1, config=ShipConfig("polish")):
         self.workers = workers
+        self.config = config
 
     def test_to_console(self, strategy: Strategy, num_of_games):
         wins = [0 for i in range(101)]
         with Pool(self.workers) as p:
             j = 0
-            for i in p.imap_unordered(worker1, Iterator(num_of_games, type(strategy))):
+            for i in p.imap_unordered(worker1, Iterator(num_of_games, type(strategy), self.config)):
                 j += 1
                 wins[i] += 1
                 won_games = "Won {} game out of {} games".format(j, num_of_games)
@@ -56,7 +59,7 @@ class StrategyTester:
         wins = [0 for i in range(101)]
         with Pool(self.workers) as p:
             j = 0
-            for i in p.imap_unordered(worker1, Iterator(num_of_games, type(strategy))):
+            for i in p.imap_unordered(worker1, Iterator(num_of_games, type(strategy), self.config)):
                 j += 1
                 wins[i] += 1
 
@@ -69,7 +72,7 @@ class StrategyTester:
         wins = [0 for i in range(101)]
         with Pool(self.workers) as p:
             j = 0
-            for i in p.imap_unordered(worker1, Iterator(num_of_games, type(strategy))):
+            for i in p.imap_unordered(worker1, Iterator(num_of_games, type(strategy), self.config)):
                 j += 1
                 wins[i] += 1
         probabilities = self.__wins_to_cumulative_probability(wins, num_of_games)

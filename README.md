@@ -48,3 +48,39 @@ if __name__ == "__main__":
     st = StrategyTester(4)
     st.test_to_console(RandomStrategy(), num_of_games)
 ```
+
+How to create my own ship configurations?
+-----------------------------------------
+
+You can do this by using `ShipConfig` class from `engine.warships`. Example:
+
+```python
+def create_my_great_config():
+    from engine.warships import ShipConfig
+
+    config = ShipConfig()
+    ships = {1: 2, 3: 1, 5: 2, 7: 1}
+
+    for length, quantity in zip(ships.keys(), ships.values()):
+        config.add_ship_details(length, quantity)
+
+    # Oh, I forgot, I wanted 3 ships of length 1... Luckily, I can fix this:
+    config.add_ship_of_length(1)
+
+    return config
+```
+
+And then, you can use previously created config to simulate games with it:
+
+```python
+
+from engine.strategy_tester import StrategyTester
+from strategies.random_strategy import RandomStrategy
+
+if __name__ == "__main__":
+    num_of_games = 10**5
+
+    st = StrategyTester(4, create_my_great_config())
+    st.test_to_console(RandomStrategy(), num_of_games)
+
+```
