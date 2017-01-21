@@ -1,18 +1,18 @@
 pywarships
 ==========
 
-`pywarships` is a library that can simulate results playing warships game with some strategies. It generates data that can be plotted to show probability curve of winning the game in some number of moves.
+`pywarships` is a library that can simulate the results of playing Warships with some strategy. It generates data that can be plotted to show the probability curve of winning the game in some number of moves.
 
 Included strategies
 -------------------
 
-The strategies that are included with library are `RandomStrategy`, `HumanStrategy` and `AnalyticalStrategy` - all in `strategies` module.
-These are the moste common strategies to think about when it comes to plaing warships - see if you can come up with better strategy!
+The strategies that are included with library are `RandomStrategy`, `HumanStrategy` and `AnalyticalStrategy` - all in the `strategies` module.
+These are the most common strategies that come to mind when plaing Warships - see if you can come up with a better strategy!
 
 How to make my own strategies?
 ------------------------------
 
-If you want, you can create your own strategy - it must be child of `strategies.strategy.Strategy` class and implement `run` method:
+If you want, you can create your own strategy - it must be child of the `strategies.strategy.Strategy` class and implement the `run` method:
 
 ```python
 def run(self, grid: Grid):
@@ -22,7 +22,7 @@ def run(self, grid: Grid):
 How to test my strategies?
 --------------------------
 
-Simply, use `engine.strategy_tester.StrategyTester` class. It has constructor with one optional argument - the number of workers assigned to complete the computation. Workers are different processes, running in parallel - If you are on `x` core proccesor, to be most efficient you can set number of workers to `x`. `StrategyTester` has 3 main testing methods - `test`, `test_to_console` and `test_to_file`:
+Simply use the `engine.strategy_tester.StrategyTester` class. It has got a constructor with one optional argument - the number of workers assigned to complete the computation. Workers are different processes, running in parallel - If you are on a `x` core proccesor, to be most efficient you can set the number of workers to `x`. The default is one worker. `StrategyTester` has 3 main testing methods - `test`, `test_to_console` and `test_to_file`:
 
 ```python
 test(strategy: Strategy, num_of_games)
@@ -30,11 +30,11 @@ test_to_console(strategy: Strategy, num_of_games)
 test_to_file(strategy: Strategy, num_of_games, filename: str)
 ```
 
-`test` just runs simulation `num_of_games` times and returns `(wins, cumulative_probabilities)` tuple, where `wins[x]` is number representing wins count at `x` moves (`x` from 0 to 100), and `cumulative_probabilities` is an list of ready-to-plot values representing cumulative probability curve.
+`test` just runs the simulation `num_of_games` times and returns a `(wins, cumulative_probabilities)` tuple, where `wins[x]` is a number representing the amount of wins at `x` moves (from 0 to 100), and `cumulative_probabilities` is an list of ready-to-plot values representing the cumulative probability curve.
 
-`test_to_console` displays progress of computing in console and prints out `wins` and `cumulative_probabilities` lists.
+`test_to_console` displays the progress of the computation in the console and prints out the `wins` and `cumulative_probabilities` lists.
 
-`test_to_file` runs simulation as in `test` function and saves results in `filename`.
+`test_to_file` runs simulation the same way that the `test` function does, and saves the results in `filename`.
 
 **Example of test:**
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
 How to create my own ship configurations?
 -----------------------------------------
 
-You can do this by using `ShipConfig` class from `engine.warships`. Example:
+You can do this by using the `ShipConfig` class from `engine.warships`. Example:
 
 ```python
 def create_my_great_config():
@@ -70,7 +70,7 @@ def create_my_great_config():
     return config
 ```
 
-And then, you can use previously created config to simulate games with it:
+And then, you can use the previously created config to simulate games with it:
 
 ```python
 
